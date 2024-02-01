@@ -1,5 +1,5 @@
 body {
-    padding-top: 70px;
+
     align-items: center;
 }
 
@@ -31,6 +31,6 @@ body {
 }
 
 #controls {
-    position: absolute;
+   
     bottom: 0;
 }
