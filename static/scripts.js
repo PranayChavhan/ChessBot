@@ -13,6 +13,7 @@ var onDragStart = function(source, piece, position, orientation) {
       (game.turn() === 'b' && piece.search(/^w/) !== -1)) {
     return false;
   }
+  return true;
 };
 
 var onDrop = function(source, target) {
@@ -86,7 +87,7 @@ var randomResponse = function() {
     fen = game.fen()
     $.get($SCRIPT_ROOT + "/move/" + fen, function(data) {
         game.move(data, {sloppy: true});
-        // board.position(game.fen());
+        board.position(game.fen());
         updateStatus();
     })
 }

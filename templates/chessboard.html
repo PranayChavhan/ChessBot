@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>ChessBot</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0">
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
+
+    <!-- Add your other head elements here -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='libs/chessboard/css/chessboard-0.3.0.css') }}">
+    <link rel="shortcut icon" href="{{ url_for('static', filename='rook_favicon.ico') }}">
+
+    <!-- Add your other style links here -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.2/chess.js"></script>
+    <script type="text/javascript"> $SCRIPT_ROOT = {{ request.script_root|tojson|safe }}; </script>
+    <script type="text/javascript"
+        src="{{ url_for('static', filename='libs/chessboard/js/chessboard-0.3.0.js') }}"></script>
+    <script type="text/javascript"
+        src="{{ url_for('static', filename='libs/chessboard/js/chessboard-0.3.0.min.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='scripts.js') }}"></script>
+</head>
+
+
+<body class="bg-gray-100">
+    <nav class="bg-blue-500 p-4">
+        <div class="mx-auto">
+            <h1 id="logo" class="text-white text-2xl font-bold">AI Chess</h1>
+        </div>
+    </nav>
+    <div class="container mx-auto mt-8">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div id="mainWindow" class="bg-white p-4 rounded">
+                <div id="piecesB"></div>
+                <div id="board"></div>
+                <div id="piecesW"></div>
+            </div>
+            <div id="secondWindow" class="bg-white p-4 rounded">
+                <h3 class="text-xl font-bold mb-4"><span id="status">White to move</span></h3>
+
+                <div id="controls" class="my-4">
+                    <form class="flex items-center space-x-4">
+                        <button type="button" class="bg-gray-200 p-2 rounded-md" id="backBtn" onclick="takeBack()">Take
+                            Back</button>
+                        <button type="button" class="bg-gray-200 p-2 rounded-md" id="reset" onclick="newGame()">New
+                            Game</button>
+                        <select class="bg-gray-200 p-2 rounded-md" id="sel1">
+                            <option value="5">Level: 5</option>
+                            <option value="4">Level: 4</option>
+                            <option value="3">Level: 3</option>
+                            <option value="2">Level: 2</option>
+                            <option value="1">Level: 1</option>
+                        </select>
+                    </form>
+                </div>
+
+                <div id="moveTable" class="overflow-x-auto">
+                    <table class="table-auto w-full border" id="pgn">
+                        <thead>
+                            <tr>
+                                <th class="border">No.</th>
+                                <th class="border">White</th>
+                                <th class="border">Black</th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

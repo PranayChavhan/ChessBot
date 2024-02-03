@@ -7,6 +7,10 @@ app = Flask(__name__)
 def index():
     return render_template("index.html")
 
+@app.route('/chessboard')
+def chessboard():
+    return render_template('chessboard.html')
+
 
 @app.route('/move/<int:depth>/<path:fen>/')
 def get_move(depth, fen):

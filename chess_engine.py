@@ -10,17 +10,17 @@ class Engine:
         self.board = chess.Board()
         self.MAX_DEPTH = 60
         self.piece_values = {
-            # pawn
+
             1:100,
-            # bishop
+     
             2:310,
-            # knight
+
             3:300,
-            # rook
+  
             4:500,
-            # queen
+
             5:900,
-            # king
+  
             6:99999
         }
         self.square_table = square_table = {
@@ -96,7 +96,7 @@ class Engine:
 
     def material_eval(self):
         score = 0
-        # iterate through the pieces
+  
         for i in range(1, 7):
             score += len(self.board.pieces(i, chess.WHITE)) * self.piece_values[i]
             score -= len(self.board.pieces(i, chess.BLACK)) * self.piece_values[i]
@@ -106,9 +106,9 @@ class Engine:
 
     def position_eval(self):
         score = 0
-        # iterate through the pieces
+
         for i in range(1, 7):
-            # eval white pieces
+
             w_squares = self.board.pieces(i, chess.WHITE)
             score += len(w_squares) * self.piece_values[i]
             for square in w_squares:
@@ -125,7 +125,7 @@ class Engine:
 
     def minimax(self, depth, move, maximiser):
         if depth == 0:
-            # return move, self.material_eval()
+
             return move, self.position_eval()
 
         if maximiser:
@@ -165,17 +165,14 @@ class Engine:
 
         move_sequence = []
 
-        # check if we're at the final search depth
         if depth_neg == 0:
-            # return move, self.material_eval()
+
             move_sequence.append(move)
             return move_sequence, self.position_eval()
 
 
         moves = list(self.board.legal_moves)
-        # moves = self.order_moves()
 
-        # if there are no legal moves, check for checkmate / stalemate
         if not moves:
             if self.board.is_checkmate():
                 if self.board.result() == "1-0":
@@ -188,80 +185,52 @@ class Engine:
                 move_sequence.append(move)
                 return move_sequence, 0
 
-        # initialise best move variables. What are these used for again? I need to simplify the logic here.
         best_move = None
         best_score = -10000001 if maximiser else 10000001
 
-        # put the last calculated best move in first place of the list. Hopefully this improves pruning.
         if prev_moves and len(prev_moves) >= depth_neg:
             if depth_neg == 4 and not self.board.turn:
                 print(prev_moves[depth_neg - 1])
             if prev_moves[depth_neg - 1] in moves:
-            # if prev_moves[depth_neg - 1] in self.board.legal_moves:
-                # if not self.board.turn:
-                #     print(prev_moves[depth_neg - 1])
                 moves.insert(0, prev_moves[depth_neg - 1])
 
 
         if maximiser:
             for move in moves:
                 self.leaves_reached += 1
-
-                # get score of the new move, record what it is
                 self.board.push(move)
                 new_sequence, new_score = self.alpha_beta(depth_neg - 1, depth_pos + 1, move, alpha, beta, prev_moves, False)
                 self.board.pop()
-
-                # Check whether the new score is better than the best score. If so, replace the best score.
                 if new_score > best_score:
                     move_sequence = new_sequence
                     best_score, best_move = new_score, move
-
-                # Check whether the new score is better than the beta. If it is, return and break the loop.
-                # Need to rethink the check against best here.
                 if new_score >= beta:
-                    # self.check_against_best(best_move, best_score, depth_pos, True)
                     move_sequence.append(best_move)
                     return move_sequence, best_score
-                # Update alpha - upper bound
                 if new_score > alpha:
                     alpha = new_score
-            # return the best of the results
-            # self.check_against_best(best_move, best_score, depth_pos, True)
             move_sequence.append(best_move)
             return move_sequence, best_score
 
         if not maximiser:
             for move in moves:
                 self.leaves_reached += 1
-
-                # get score of the new move, record what it is
                 self.board.push(move)
                 new_sequence, new_score = self.alpha_beta(depth_neg - 1, depth_pos + 1, move, alpha, beta, prev_moves, True)
                 self.board.pop()
-
-                # Check whether the new score is better than the best score. If so, replace the best score.
                 if new_score < best_score:
                     move_sequence = new_sequence
                     best_score, best_move = new_score, move
-
-                # Check whether the new score is better than the alpha. If it is, return and break the loop
                 if new_score <= alpha:
-                    # self.check_against_best(best_move, best_score, depth_pos, False)
+
                     move_sequence.append(best_move)
                     return move_sequence, best_score
-
-                # update beta - lower bound
                 if new_score < beta:
                     beta = new_score
-
-            # return the best of the results
-            # self.check_against_best(best_move, best_score, depth_pos, False)
             move_sequence.append(best_move)
             return move_sequence, best_score
 
     def calculate_minimax(self, depth):
-        # This shows up true for white & false for black
         maximiser = self.board.turn
 
         best_move, best_score = self.minimax(depth, None, maximiser)
@@ -289,7 +258,6 @@ class Engine:
         scores = []
         for move in moves:
             self.board.push(move)
-            # scores.append(self.material_eval())
             scores.append(self.material_eval())
             self.board.pop()
         sorted_indexes = sorted(range(len(scores)), key=lambda i: scores[i], reverse=False)
@@ -297,7 +265,6 @@ class Engine:
 
 
     def iterative_deepening(self, depth):
-        # depth_neg, depth_pos, move, alpha, beta, prev_moves, maximiser)
         move_list, score  = self.alpha_beta(1, 0, None, -10000001, 10000001, None, self.board.turn)
         for i in range(2, depth + 1):
             print("Iteration", i)
@@ -305,45 +272,15 @@ class Engine:
         print("Depth calculated:", len(move_list))
         return str(move_list[-1])
 
-
-
-# This is being used for testing at the moment, which is why there is so much commented code.
-# Will move to a standalone testing script when I get the chance.
 if __name__=="__main__":
 
     fen = "r2qkbr1/ppp1pppp/2n1b2n/8/8/5P2/PPPP2PP/RNB1KBNR b KQq - 0 6"
-
     newengine = Engine(fen)
-
-
-    # squares = newengine.board.pieces(1, chess.WHITE)
-    # for square in squares:
-    #     print (square)
-    # print(squares)
-
-    # print(newengine.board)
-    # print(newengine.order_moves())
-
-    # print(newengine.material_eval())
-    # print(newengine.lazy_eval())
-
-    # start_time = time.time()
-    # print(newengine.calculate(3))
-    # print(newengine.total_leaves())
-    # print("Time taken:", time.time() - start_time)
-
     start_time = time.time()
     print(newengine.calculate_ab(4))
     print(newengine.total_leaves())
     print("Time taken:", time.time() - start_time)
-
     start_time = time.time()
     print(newengine.iterative_deepening(4))
     print(newengine.total_leaves())
     print("Time taken:", time.time() - start_time)
-    # cProfile.run('newengine.calculate(3)')
-    #
-    # cProfile.run('newengine.calculate_ab(3)')
-
-
-    # print(newengine.board)
